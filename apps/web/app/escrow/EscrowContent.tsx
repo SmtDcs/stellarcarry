@@ -4,7 +4,7 @@ import { useState, useCallback, useEffect, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { EscrowState, EscrowClient } from "@stellarcarry/core";
-import { isConnected, getAddress, setAllowed } from "@stellar/freighter-api";
+import { isConnected, getAddress, setAllowed, isBrowser } from "@stellar/freighter-api";
 import { EscrowStepper } from "@/components/EscrowStepper";
 import { VaultSeal } from "@/components/travel/vault-seal";
 import { StarField } from "@/components/travel/star-field";
@@ -71,7 +71,7 @@ export function EscrowContent() {
     try {
       if (
         typeof window === "undefined" ||
-        typeof (window as Window & { freighter?: unknown }).freighter === "undefined"
+        !isBrowser
       ) {
         setWalletStatus("not-installed");
         return;

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { isConnected, getAddress, setAllowed, getNetwork } from "@stellar/freighter-api";
+import { isConnected, getAddress, setAllowed, getNetwork, isBrowser } from "@stellar/freighter-api";
 import { motion, AnimatePresence } from "motion/react";
 
 type WalletState = "idle" | "not-installed" | "disconnected" | "connected";
@@ -46,10 +46,7 @@ export function WalletConnect() {
 
   const detect = useCallback(async () => {
     try {
-      if (
-        typeof window === "undefined" ||
-        typeof (window as Window & { freighter?: unknown }).freighter === "undefined"
-      ) {
+      if (typeof window === "undefined" || !isBrowser) {
         setState("not-installed");
         return;
       }

@@ -247,7 +247,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Refunded);
         setResults(p => [...p, { label: "Refund", xdr: "", success: true }]);
       } else {
-        const r = await submitEscrowTx("refund", "4");
+        const r = await submitEscrowTx("refund", "6");
         const result: ActionResult = { ...r, label: "Refund", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Refunded);

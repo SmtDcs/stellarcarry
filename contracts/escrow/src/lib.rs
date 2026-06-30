@@ -73,7 +73,7 @@ impl EscrowContract {
             .storage()
             .instance()
             .get(&key)
-            .unwrap_or_else(|| panic!("escrow not found"));
+            .unwrap();
 
         assert!(
             escrow.state == EscrowState::Created,
@@ -90,7 +90,7 @@ impl EscrowContract {
             .storage()
             .instance()
             .get(&key)
-            .unwrap_or_else(|| panic!("escrow not found"));
+            .unwrap();
 
         assert!(
             escrow.state == EscrowState::Funded,
@@ -107,7 +107,7 @@ impl EscrowContract {
             .storage()
             .instance()
             .get(&key)
-            .unwrap_or_else(|| panic!("escrow not found"));
+            .unwrap();
 
         assert!(
             escrow.state == EscrowState::Delivered,
@@ -128,7 +128,7 @@ impl EscrowContract {
             .storage()
             .instance()
             .get(&key)
-            .unwrap_or_else(|| panic!("escrow not found"));
+            .unwrap();
 
         assert!(
             escrow.state == EscrowState::Funded,
@@ -148,7 +148,7 @@ impl EscrowContract {
         env.storage()
             .instance()
             .get(&key)
-            .unwrap_or_else(|| panic!("escrow not found"))
+            .unwrap()  // return Escrow value directly
     }
 
     pub fn get_reputation(env: Env, traveler: Address) -> i128 {

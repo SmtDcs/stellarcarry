@@ -1,5 +1,6 @@
-// deploy.mts — Deploy escrow contract to Stellar testnet
-// Usage: npx tsx scripts/deploy.mts
+// Build first: 
+//   cd contracts && cargo build --target wasm32-unknown-unknown --release
+//   wasm-opt --mvp-features -all -O0 target/wasm32-unknown-unknown/release/escrow.wasm -o target/wasm32-unknown-unknown/release/escrow_mvp.wasm
 
 import {
   Keypair,

@@ -190,7 +190,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Funded);
         setResults(p => [{ label: "Fund Escrow", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("fund", "3");
+        const r = await submitEscrowTx("fund", "9");
         const result: ActionResult = { ...r, label: "Fund Escrow", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Funded);
@@ -209,7 +209,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Delivered);
         setResults(p => [{ label: "Confirm Delivery", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("confirm_delivery", "3");
+        const r = await submitEscrowTx("confirm_delivery", "9");
         const result: ActionResult = { ...r, label: "Confirm Delivery", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Delivered);

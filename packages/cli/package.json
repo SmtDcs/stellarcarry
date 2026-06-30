@@ -1,0 +1,11 @@
+{
+  "name": "@stellarcarry/cli",
+  "version": "0.0.0",
+  "type": "module",
+  "bin": { "stellarcarry": "src/index.ts" },
+  "dependencies": {
+    "@stellarcarry/core": "*",
+    "commander": "*"
+  },
+  "scripts": { "test": "vitest run --passWithNoTests" }
+}

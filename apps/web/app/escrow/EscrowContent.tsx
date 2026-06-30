@@ -120,11 +120,11 @@ export function EscrowContent() {
         case "fund":
           tx = client.buildFund(walletAddress, BigInt(escrowId), acctData.sequence); break;
         case "confirm_delivery":
-          tx = client.buildConfirmDelivery(walletAddress, BigInt(escrowId)); break;
+          tx = client.buildConfirmDelivery(walletAddress, BigInt(escrowId), acctData.sequence); break;
         case "release":
-          tx = client.buildRelease(walletAddress, BigInt(escrowId)); break;
+          tx = client.buildRelease(walletAddress, BigInt(escrowId), acctData.sequence); break;
         case "refund":
-          tx = client.buildRefund(walletAddress, BigInt(escrowId)); break;
+          tx = client.buildRefund(walletAddress, BigInt(escrowId), acctData.sequence); break;
         default:
           return { label: "", xdr: "", success: false, error: { type: "validation", message: "Unknown action" } };
       }

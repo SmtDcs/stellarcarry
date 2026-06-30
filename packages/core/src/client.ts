@@ -194,7 +194,7 @@ export class EscrowClient {
    * @param escrowId - numeric escrow ID on the contract (u64).
    * @throws {ValidationError} if sourcePubKey is empty or escrowId is negative.
    */
-  buildConfirmDelivery(sourcePubKey: string, escrowId: bigint): Transaction {
+  buildConfirmDelivery(sourcePubKey: string, escrowId: bigint, sequence?: string): Transaction {
     if (!sourcePubKey || typeof sourcePubKey !== 'string' || sourcePubKey.trim() === '') {
       throw new ValidationError('sourcePubKey must be a non-empty string');
     }
@@ -214,7 +214,7 @@ export class EscrowClient {
    * @param escrowId - numeric escrow ID on the contract (u64).
    * @throws {ValidationError} if sourcePubKey is empty or escrowId is negative.
    */
-  buildRelease(sourcePubKey: string, escrowId: bigint): Transaction {
+  buildRelease(sourcePubKey: string, escrowId: bigint, sequence?: string): Transaction {
     if (!sourcePubKey || typeof sourcePubKey !== 'string' || sourcePubKey.trim() === '') {
       throw new ValidationError('sourcePubKey must be a non-empty string');
     }
@@ -224,7 +224,7 @@ export class EscrowClient {
 
     return this.buildTransaction(sourcePubKey, 'release', [
       nativeToScVal(escrowId, { type: 'u64' }),
-    ]);
+    ], sequence);
   }
 
   /**
@@ -234,7 +234,7 @@ export class EscrowClient {
    * @param escrowId - numeric escrow ID on the contract (u64).
    * @throws {ValidationError} if sourcePubKey is empty or escrowId is negative.
    */
-  buildRefund(sourcePubKey: string, escrowId: bigint): Transaction {
+  buildRefund(sourcePubKey: string, escrowId: bigint, sequence?: string): Transaction {
     if (!sourcePubKey || typeof sourcePubKey !== 'string' || sourcePubKey.trim() === '') {
       throw new ValidationError('sourcePubKey must be a non-empty string');
     }

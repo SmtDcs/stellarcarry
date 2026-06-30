@@ -96,16 +96,18 @@ export class EscrowClient {
    * @param sourcePubKey - Stellar account public key (G…) of the submitter.
    * @param funcName - contract method name.
    * @param scvArgs - array of pre-built `xdr.ScVal` arguments.
+   * @param sequence - optional account sequence number (fetched from Horizon).
    */
   private buildTransaction(
     sourcePubKey: string,
     funcName: string,
     scvArgs: ReturnType<typeof nativeToScVal>[],
+    sequence?: string,
   ): Transaction {
-    const account = new Account(sourcePubKey, '0');
+    const account = new Account(sourcePubKey, sequence ?? '0');
 
-    return new TransactionBuilder(account, {
-      fee: '100',
+    const builder = new TransactionBuilder(account, {
+      fee: '100000',
       networkPassphrase: this.networkPassphrase,
     })
       .addOperation(
@@ -115,8 +117,11 @@ export class EscrowClient {
           args: scvArgs,
         }),
       )
-      .setTimeout(300)
-      .build();
+      .setTimeout(300);
+
+    // Soroban transactions need resource fees from simulation
+    // For now, set a high fee to cover costs
+    return builder.build();
   }
 
   /**
@@ -136,6 +141,7 @@ export class EscrowClient {
     traveler: string,
     amountStroops: bigint,
     deadline: bigint,
+    sequence?: string,
   ): Transaction {
     if (!sourcePubKey || typeof sourcePubKey !== 'string' || sourcePubKey.trim() === '') {
       throw new ValidationError('sourcePubKey must be a non-empty string');
@@ -158,7 +164,7 @@ export class EscrowClient {
       nativeToScVal(traveler, { type: 'address' }),
       nativeToScVal(amountStroops, { type: 'i128' }),
       nativeToScVal(deadline, { type: 'u64' }),
-    ]);
+    ], sequence);
   }
 
   /**
@@ -168,7 +174,7 @@ export class EscrowClient {
    * @param escrowId - numeric escrow ID on the contract (u64).
    * @throws {ValidationError} if sourcePubKey is empty or escrowId is negative.
    */
-  buildFund(sourcePubKey: string, escrowId: bigint): Transaction {
+  buildFund(sourcePubKey: string, escrowId: bigint, sequence?: string): Transaction {
     if (!sourcePubKey || typeof sourcePubKey !== 'string' || sourcePubKey.trim() === '') {
       throw new ValidationError('sourcePubKey must be a non-empty string');
     }
@@ -178,7 +184,7 @@ export class EscrowClient {
 
     return this.buildTransaction(sourcePubKey, 'fund', [
       nativeToScVal(escrowId, { type: 'u64' }),
-    ]);
+    ], sequence);
   }
 
   /**

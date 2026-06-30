@@ -114,21 +114,25 @@ export function EscrowContent() {
       if (!acctRes.ok) return { label: "", xdr: "", success: false, error: { type: "not_found", message: "Account not funded on testnet. Visit laboratory.stellar.org" } };
       const acctData = await acctRes.json();
 
+      const client = new EscrowClient({ contractId: CONTRACT_ID });
       let tx;
       switch (action) {
         case "fund":
-          tx = new EscrowClient({ contractId: CONTRACT_ID }).buildFund(walletAddress, BigInt(escrowId), acctData.sequence); break;
+          tx = client.buildFund(walletAddress, BigInt(escrowId), acctData.sequence); break;
         case "confirm_delivery":
-          tx = new EscrowClient({ contractId: CONTRACT_ID }).buildConfirmDelivery(walletAddress, BigInt(escrowId)); break;
+          tx = client.buildConfirmDelivery(walletAddress, BigInt(escrowId)); break;
         case "release":
-          tx = new EscrowClient({ contractId: CONTRACT_ID }).buildRelease(walletAddress, BigInt(escrowId)); break;
+          tx = client.buildRelease(walletAddress, BigInt(escrowId)); break;
         case "refund":
-          tx = new EscrowClient({ contractId: CONTRACT_ID }).buildRefund(walletAddress, BigInt(escrowId)); break;
+          tx = client.buildRefund(walletAddress, BigInt(escrowId)); break;
         default:
           return { label: "", xdr: "", success: false, error: { type: "validation", message: "Unknown action" } };
       }
 
-      const xdr = tx.toXDR();
+      // RPC prepareTransaction: bumps fee + sequence for Soroban
+      const prepTx = await client.rpc.prepareTransaction(tx);
+      const xdr = prepTx.toXDR();
+
       const signed = await signTransaction(xdr, { networkPassphrase: NETWORK_PASSPHRASE });
       if (!signed.signedTxXdr) return { label: "", xdr: "", success: false, error: { type: "auth", message: "Transaction cancelled or not signed" } };
 
@@ -141,9 +145,11 @@ export function EscrowContent() {
       if (rpcData.error) return { label: "", xdr: "", success: false, error: { type: "unknown", message: rpcData.error.message || "Submit failed" } };
 
       const txHash: string = rpcData.result?.hash || rpcData.result?.txHash || "";
+      if (!txHash) return { label: "", xdr: "", success: false, error: { type: "unknown", message: "No transaction hash in response" } };
 
+      // Poll for final status
       let status = "PENDING";
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 15; i++) {
         await new Promise(r => setTimeout(r, 3000));
         const statusRes = await fetch(RPC_URL, {
           method: "POST",
@@ -151,16 +157,22 @@ export function EscrowContent() {
           body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "getTransaction", params: { hash: txHash } }),
         });
         const statusData = await statusRes.json();
-        status = statusData.result?.status || "NOT_FOUND";
+        if (!statusData.result) continue;
+        status = statusData.result.status || "PENDING";
         if (status === "SUCCESS" || status === "FAILED") break;
       }
 
       if (status === "SUCCESS") {
         return { label: "", xdr: signed.signedTxXdr, success: true, txHash };
       } else if (status === "FAILED") {
-        return { label: "", xdr: "", success: false, error: { type: "simulation", message: "Transaction failed on testnet" }, txHash };
+        const resultTx = (await (await fetch(RPC_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "getTransaction", params: { hash: txHash } }),
+        })).json()).result;
+        return { label: "", xdr: "", success: false, error: { type: "simulation", message: resultTx?.resultXdr ? "Transaction failed" : "Transaction failed on testnet" }, txHash };
       } else {
-        return { label: "", xdr: "", success: false, error: { type: "unknown", message: `Transaction stuck: ${status}` }, txHash };
+        return { label: "", xdr: "", success: false, error: { type: "unknown", message: `Transaction status: ${status}` }, txHash };
       }
     } catch (e) {
       return { label: "", xdr: "", success: false, error: { type: "unknown", message: e instanceof Error ? e.message : "Unexpected error" } };
@@ -176,9 +188,9 @@ export function EscrowContent() {
       if (isDemo) {
         await new Promise(r => setTimeout(r, 600));
         setCurrentState(EscrowState.Funded);
-        setResults(p => [...p, { label: "Fund Escrow", xdr: "", success: true }]);
+        setResults(p => [{ label: "Fund Escrow", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("fund", "5");
+        const r = await submitEscrowTx("fund", "13");
         const result: ActionResult = { ...r, label: "Fund Escrow", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Funded);
@@ -195,9 +207,9 @@ export function EscrowContent() {
       if (isDemo) {
         await new Promise(r => setTimeout(r, 600));
         setCurrentState(EscrowState.Delivered);
-        setResults(p => [...p, { label: "Confirm Delivery", xdr: "", success: true }]);
+        setResults(p => [{ label: "Confirm Delivery", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("confirm_delivery", "5");
+        const r = await submitEscrowTx("confirm_delivery", "13");
         const result: ActionResult = { ...r, label: "Confirm Delivery", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Delivered);
@@ -216,7 +228,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Released);
         setResults(p => [...p, { label: "Release Funds", xdr: "", success: true }]);
       } else {
-        const r = await submitEscrowTx("release", "5");
+        const r = await submitEscrowTx("release", "13");
         const result: ActionResult = { ...r, label: "Release Funds", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Released);
@@ -235,7 +247,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Refunded);
         setResults(p => [...p, { label: "Refund", xdr: "", success: true }]);
       } else {
-        const r = await submitEscrowTx("refund", "6");
+        const r = await submitEscrowTx("refund", "14");
         const result: ActionResult = { ...r, label: "Refund", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Refunded);

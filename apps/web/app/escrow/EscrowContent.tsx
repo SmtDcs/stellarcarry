@@ -24,7 +24,7 @@ type ActionResult = {
   txHash?: string;
 };
 
-type ErrorType = "auth" | "state" | "deadline" | "sequence" | "funds" | "not_found" | "validation" | "unknown";
+type ErrorType = "auth" | "state" | "deadline" | "sequence" | "funds" | "not_found" | "validation" | "simulation" | "unknown";
 
 const ERROR_LABELS: Record<ErrorType, { title: string; icon: string }> = {
   auth: { title: "Authorization Error", icon: "🔐" },
@@ -34,6 +34,7 @@ const ERROR_LABELS: Record<ErrorType, { title: string; icon: string }> = {
   funds: { title: "Insufficient Funds", icon: "💰" },
   not_found: { title: "Not Found", icon: "🔍" },
   validation: { title: "Validation Error", icon: "⚠️" },
+  simulation: { title: "Simulation Error", icon: "🧪" },
   unknown: { title: "Unexpected Error", icon: "❌" },
 };
 
@@ -135,18 +136,27 @@ export function EscrowContent() {
   );
 
   const handleFund = useCallback(async () => {
+    const simulated = walletStatus !== "connected";
     setActiveAction("fund");
     setError(null);
 
     try {
-      const result = await simulateAction("fund", { escrowId: "1" });
+      if (simulated) {
+        // Demo mode: skip API, advance state locally
+        await new Promise(r => setTimeout(r, 600));
+        setCurrentState(EscrowState.Funded);
+        setResults((prev) => [{ label: "Fund Escrow", xdr: "", success: true, simulation: {} }, ...prev]);
+        return;
+      }
+
+      const result = await simulateAction("fund", { escrowId: "5" });
       setResults((prev) => [{ label: "Fund Escrow", xdr: result.xdr ?? "", success: result.success, simulation: result.simulation, error: result.error }, ...prev]);
 
       if (result.success) {
         setCurrentState(EscrowState.Funded);
       } else if (result.error) {
         setError(result.error.message);
-        setErrorType(result.error.type as ErrorType);
+        setErrorType((result.error.type || "unknown") as ErrorType);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -154,21 +164,29 @@ export function EscrowContent() {
     } finally {
       setActiveAction(null);
     }
-  }, [simulateAction]);
+  }, [simulateAction, walletStatus]);
 
   const handleConfirmDelivery = useCallback(async () => {
+    const simulated = walletStatus !== "connected";
     setActiveAction("confirmDelivery");
     setError(null);
 
     try {
-      const result = await simulateAction("confirm_delivery", { escrowId: "1" });
+      if (simulated) {
+        await new Promise(r => setTimeout(r, 600));
+        setCurrentState(EscrowState.Delivered);
+        setResults((prev) => [{ label: "Confirm Delivery", xdr: "", success: true, simulation: {} }, ...prev]);
+        return;
+      }
+
+      const result = await simulateAction("confirm_delivery", { escrowId: "5" });
       setResults((prev) => [{ label: "Confirm Delivery", xdr: result.xdr ?? "", success: result.success, simulation: result.simulation, error: result.error }, ...prev]);
 
       if (result.success) {
         setCurrentState(EscrowState.Delivered);
       } else if (result.error) {
         setError(result.error.message);
-        setErrorType(result.error.type as ErrorType);
+        setErrorType((result.error.type || "unknown") as ErrorType);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -176,21 +194,29 @@ export function EscrowContent() {
     } finally {
       setActiveAction(null);
     }
-  }, [simulateAction]);
+  }, [simulateAction, walletStatus]);
 
   const handleRelease = useCallback(async () => {
+    const simulated = walletStatus !== "connected";
     setActiveAction("release");
     setError(null);
 
     try {
-      const result = await simulateAction("release", { escrowId: "1" });
+      if (simulated) {
+        await new Promise(r => setTimeout(r, 600));
+        setCurrentState(EscrowState.Released);
+        setResults((prev) => [{ label: "Release Funds", xdr: "", success: true, simulation: {} }, ...prev]);
+        return;
+      }
+
+      const result = await simulateAction("release", { escrowId: "5" });
       setResults((prev) => [{ label: "Release Funds", xdr: result.xdr ?? "", success: result.success, simulation: result.simulation, error: result.error }, ...prev]);
 
       if (result.success) {
         setCurrentState(EscrowState.Released);
       } else if (result.error) {
         setError(result.error.message);
-        setErrorType(result.error.type as ErrorType);
+        setErrorType((result.error.type || "unknown") as ErrorType);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -198,21 +224,29 @@ export function EscrowContent() {
     } finally {
       setActiveAction(null);
     }
-  }, [simulateAction]);
+  }, [simulateAction, walletStatus]);
 
   const handleRefund = useCallback(async () => {
+    const simulated = walletStatus !== "connected";
     setActiveAction("refund");
     setError(null);
 
     try {
-      const result = await simulateAction("refund", { escrowId: "0" });
+      if (simulated) {
+        await new Promise(r => setTimeout(r, 600));
+        setCurrentState(EscrowState.Refunded);
+        setResults((prev) => [{ label: "Refund", xdr: "", success: true, simulation: {} }, ...prev]);
+        return;
+      }
+
+      const result = await simulateAction("refund", { escrowId: "6" });
       setResults((prev) => [{ label: "Refund", xdr: result.xdr ?? "", success: result.success, simulation: result.simulation, error: result.error }, ...prev]);
 
       if (result.success) {
         setCurrentState(EscrowState.Refunded);
       } else if (result.error) {
         setError(result.error.message);
-        setErrorType(result.error.type as ErrorType);
+        setErrorType((result.error.type || "unknown") as ErrorType);
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Unknown error");
@@ -220,7 +254,7 @@ export function EscrowContent() {
     } finally {
       setActiveAction(null);
     }
-  }, [simulateAction]);
+  }, [simulateAction, walletStatus]);
 
   const isTerminal =
     currentState === EscrowState.Released || currentState === EscrowState.Refunded;

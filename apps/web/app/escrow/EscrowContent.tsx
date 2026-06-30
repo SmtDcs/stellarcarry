@@ -11,7 +11,7 @@ import { StarField } from "@/components/travel/star-field";
 import type { VaultSealState } from "@/components/travel/vault-seal";
 import { cn } from "@/lib/utils";
 
-const CONTRACT_ID = "CD5JL2YOCU3ETHPKMXQZJOYJQSED4JXRPPOG2L7MSDUNGHD24FOCHHPX";
+const CONTRACT_ID = "CDYZYD7PV2O7FWZC3MJVB2XXOQ3BBC3Y2JLO7EWO7WP6XIGCRRUX6SK4";
 const HORIZON_TESTNET = "https://horizon-testnet.stellar.org";
 const RPC_URL = "https://soroban-testnet.stellar.org";
 const NETWORK_PASSPHRASE = "Test SDF Network ; September 2015";
@@ -190,7 +190,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Funded);
         setResults(p => [{ label: "Fund Escrow", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("fund", "14");
+        const r = await submitEscrowTx("fund", "3");
         const result: ActionResult = { ...r, label: "Fund Escrow", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Funded);
@@ -209,7 +209,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Delivered);
         setResults(p => [{ label: "Confirm Delivery", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("confirm_delivery", "14");
+        const r = await submitEscrowTx("confirm_delivery", "3");
         const result: ActionResult = { ...r, label: "Confirm Delivery", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Delivered);
@@ -228,7 +228,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Released);
         setResults(p => [...p, { label: "Release Funds", xdr: "", success: true }]);
       } else {
-        const r = await submitEscrowTx("release", "13");
+        const r = await submitEscrowTx("release", "3");
         const result: ActionResult = { ...r, label: "Release Funds", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Released);
@@ -247,7 +247,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Refunded);
         setResults(p => [...p, { label: "Refund", xdr: "", success: true }]);
       } else {
-        const r = await submitEscrowTx("refund", "15");
+        const r = await submitEscrowTx("refund", "4");
         const result: ActionResult = { ...r, label: "Refund", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Refunded);

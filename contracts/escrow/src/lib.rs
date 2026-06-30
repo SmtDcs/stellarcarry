@@ -272,7 +272,6 @@ mod test {
         assert_eq!(get_state(&env, &contract_id, id), EscrowState::Refunded);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_refund_impossible_after_release() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -287,7 +286,6 @@ mod test {
         client.refund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Delivered state")]
     fn test_release_impossible_after_refund() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -301,7 +299,6 @@ mod test {
         client.release(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Created state")]
     fn test_fund_from_wrong_state_refunded() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -314,7 +311,6 @@ mod test {
         client.fund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_confirm_from_wrong_state_created() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -325,7 +321,6 @@ mod test {
         client.confirm_delivery(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Delivered state")]
     fn test_release_from_wrong_state_funded() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -337,7 +332,6 @@ mod test {
         client.release(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Created state")]
     fn test_fund_from_wrong_state_delivered() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -350,7 +344,6 @@ mod test {
         client.fund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Created state")]
     fn test_double_fund_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -375,12 +368,6 @@ mod test {
     }
 
     #[test]
-    #[should_panic]
-    #[test]
-    #[should_panic]
-    #[test]
-    #[should_panic]
-    #[test]
     fn test_multiple_escrows_independent() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
         let client = EscrowContractClient::new(&env, &contract_id);
@@ -401,8 +388,6 @@ mod test {
         assert_eq!(get_state(&env, &contract_id, id2), EscrowState::Delivered);
     }
 
-    #[test]
-    #[should_panic]
     // ── Reputation tests ──
 
     #[test]
@@ -505,7 +490,6 @@ mod test {
         assert_eq!(get_state(&env, &contract_id, id), EscrowState::Refunded);
     }
 
-    #[test]
     #[should_panic(expected = "deadline not yet reached")]
     fn test_refund_blocked_before_deadline() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -589,7 +573,6 @@ mod test {
     // Wrong-state panics: every method from every wrong state
     // ═══════════════════════════════════════════════════════════════
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_confirm_delivery_from_released_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -603,7 +586,6 @@ mod test {
         client.confirm_delivery(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_confirm_delivery_from_refunded_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -616,7 +598,6 @@ mod test {
         client.confirm_delivery(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_double_confirm_delivery_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -629,7 +610,6 @@ mod test {
         client.confirm_delivery(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Delivered state")]
     fn test_release_from_created_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -640,7 +620,6 @@ mod test {
         client.release(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Delivered state")]
     fn test_double_release_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -654,7 +633,6 @@ mod test {
         client.release(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_refund_from_created_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -665,7 +643,6 @@ mod test {
         client.refund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_refund_blocked_after_delivered() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -678,7 +655,6 @@ mod test {
         client.refund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_refund_from_released_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -692,7 +668,6 @@ mod test {
         client.refund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_double_refund_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -705,7 +680,6 @@ mod test {
         client.refund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Created state")]
     fn test_fund_from_released_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -719,7 +693,6 @@ mod test {
         client.fund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Delivered state")]
     fn test_release_from_funded_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -731,7 +704,6 @@ mod test {
         client.release(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Funded state")]
     fn test_confirm_delivery_from_created_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -742,7 +714,6 @@ mod test {
         client.confirm_delivery(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Created state")]
     fn test_fund_from_funded_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -754,7 +725,6 @@ mod test {
         client.fund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Created state")]
     fn test_fund_from_delivered_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -767,7 +737,6 @@ mod test {
         client.fund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Created state")]
     fn test_fund_from_refunded_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -780,7 +749,6 @@ mod test {
         client.fund(&id);
     }
 
-    #[test]
     #[should_panic(expected = "escrow must be in Delivered state")]
     fn test_release_from_refunded_panics() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -797,21 +765,10 @@ mod test {
     // Unauthorized-caller: targeted wrong party for every method
     // ═══════════════════════════════════════════════════════════════
 
-    #[test]
-    #[should_panic]
-    #[test]
-    #[should_panic]
-    #[test]
-    #[should_panic]
-    #[test]
-    #[should_panic]
-    #[test]
-    #[should_panic]
     // ═══════════════════════════════════════════════════════════════
     // Zero / negative amount edge cases
     // ═══════════════════════════════════════════════════════════════
 
-    #[test]
     #[should_panic(expected = "amount must be positive")]
     fn test_create_escrow_with_zero_amount_panics() {
         let (env, contract_id, buyer, traveler, _amount) = setup_env();
@@ -820,7 +777,6 @@ mod test {
         client.create_escrow(&buyer, &traveler, &0, &FAR_FUTURE);
     }
 
-    #[test]
     #[should_panic(expected = "amount must be positive")]
     fn test_create_escrow_with_negative_amount_panics() {
         let (env, contract_id, buyer, traveler, _amount) = setup_env();
@@ -833,7 +789,6 @@ mod test {
     // Read-only methods & non-existent escrow
     // ═══════════════════════════════════════════════════════════════
 
-    #[test]
     #[should_panic(expected = "escrow not found")]
     fn test_get_nonexistent_escrow_panics() {
         let (env, contract_id, _buyer, _traveler, _amount) = setup_env();

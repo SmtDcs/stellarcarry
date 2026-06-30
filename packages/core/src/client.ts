@@ -204,7 +204,7 @@ export class EscrowClient {
 
     return this.buildTransaction(sourcePubKey, 'confirm_delivery', [
       nativeToScVal(escrowId, { type: 'u64' }),
-    ]);
+    ], sequence);
   }
 
   /**

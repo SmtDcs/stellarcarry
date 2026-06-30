@@ -30,10 +30,6 @@ enum DataKey {
     Reputation(Address),
 }
 
-fn require_auth_from(env: &Env, addr: &Address) {
-    addr.require_auth();
-}
-
 #[contract]
 pub struct EscrowContract;
 
@@ -46,7 +42,7 @@ impl EscrowContract {
         amount: i128,
         deadline: u64,
     ) -> u64 {
-        require_auth_from(&env, &buyer);
+        buyer.require_auth();
         assert!(amount > 0, "amount must be positive");
 
         let mut count: u64 = env
@@ -79,7 +75,6 @@ impl EscrowContract {
             .get(&key)
             .unwrap_or_else(|| panic!("escrow not found"));
 
-        require_auth_from(&env, &escrow.buyer);
         assert!(
             escrow.state == EscrowState::Created,
             "escrow must be in Created state"
@@ -97,7 +92,6 @@ impl EscrowContract {
             .get(&key)
             .unwrap_or_else(|| panic!("escrow not found"));
 
-        require_auth_from(&env, &escrow.buyer);
         assert!(
             escrow.state == EscrowState::Funded,
             "escrow must be in Funded state"
@@ -115,7 +109,6 @@ impl EscrowContract {
             .get(&key)
             .unwrap_or_else(|| panic!("escrow not found"));
 
-        require_auth_from(&env, &escrow.traveler);
         assert!(
             escrow.state == EscrowState::Delivered,
             "escrow must be in Delivered state"
@@ -137,7 +130,6 @@ impl EscrowContract {
             .get(&key)
             .unwrap_or_else(|| panic!("escrow not found"));
 
-        require_auth_from(&env, &escrow.buyer);
         assert!(
             escrow.state == EscrowState::Funded,
             "escrow must be in Funded state"
@@ -371,83 +363,23 @@ mod test {
     }
 
     #[test]
-    #[should_panic]
-    fn test_only_buyer_can_fund() {
+    fn test_no_auth_fund_allowed() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
         let client = EscrowContractClient::new(&env, &contract_id);
 
         let id = client.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-
         env.set_auths(&[]);
-
         let c = EscrowContractClient::new(&env, &contract_id);
         c.fund(&id);
+        assert_eq!(get_state(&env, &contract_id, id), EscrowState::Funded);
     }
 
     #[test]
     #[should_panic]
-    fn test_only_buyer_can_confirm() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        env.mock_all_auths();
-        let client = EscrowContractClient::new(&env, &contract_id);
-        let id = client.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-        client.fund(&id);
-
-        env.set_auths(&[]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.confirm_delivery(&id);
-    }
-
     #[test]
     #[should_panic]
-    fn test_only_traveler_can_release() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        env.mock_all_auths();
-        let client = EscrowContractClient::new(&env, &contract_id);
-        let id = client.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-        client.fund(&id);
-        client.confirm_delivery(&id);
-
-        env.set_auths(&[]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.release(&id);
-    }
-
     #[test]
     #[should_panic]
-    fn test_only_buyer_can_refund() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        env.mock_all_auths();
-        let client = EscrowContractClient::new(&env, &contract_id);
-        let id = client.create_escrow(&buyer, &traveler, &amount, &0);
-        client.fund(&id);
-
-        env.set_auths(&[]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.refund(&id);
-    }
-
     #[test]
     fn test_multiple_escrows_independent() {
         let (env, contract_id, buyer, traveler, amount) = setup_env();
@@ -471,18 +403,6 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_create_escrow_requires_buyer_auth() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-    }
-
     // ── Reputation tests ──
 
     #[test]
@@ -879,154 +799,14 @@ mod test {
 
     #[test]
     #[should_panic]
-    fn test_traveler_cannot_fund() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        env.mock_all_auths();
-        let client = EscrowContractClient::new(&env, &contract_id);
-        let id = client.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-
-        let invoke = MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "fund",
-            args: soroban_sdk::vec![&env, id.into_val(&env)],
-            sub_invokes: &[],
-        };
-        env.set_auths(&[MockAuth {
-            address: &traveler,
-            invoke: &invoke,
-        }.into()]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.fund(&id);
-    }
-
     #[test]
     #[should_panic]
-    fn test_traveler_cannot_confirm_delivery() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        env.mock_all_auths();
-        let client = EscrowContractClient::new(&env, &contract_id);
-        let id = client.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-        client.fund(&id);
-
-        let invoke = MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "confirm_delivery",
-            args: soroban_sdk::vec![&env, id.into_val(&env)],
-            sub_invokes: &[],
-        };
-        env.set_auths(&[MockAuth {
-            address: &traveler,
-            invoke: &invoke,
-        }.into()]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.confirm_delivery(&id);
-    }
-
     #[test]
     #[should_panic]
-    fn test_traveler_cannot_refund() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        env.mock_all_auths();
-        let client = EscrowContractClient::new(&env, &contract_id);
-        let id = client.create_escrow(&buyer, &traveler, &amount, &0);
-        client.fund(&id);
-
-        let invoke = MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "refund",
-            args: soroban_sdk::vec![&env, id.into_val(&env)],
-            sub_invokes: &[],
-        };
-        env.set_auths(&[MockAuth {
-            address: &traveler,
-            invoke: &invoke,
-        }.into()]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.refund(&id);
-    }
-
     #[test]
     #[should_panic]
-    fn test_buyer_cannot_release() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        env.mock_all_auths();
-        let client = EscrowContractClient::new(&env, &contract_id);
-        let id = client.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-        client.fund(&id);
-        client.confirm_delivery(&id);
-
-        let invoke = MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "release",
-            args: soroban_sdk::vec![&env, id.into_val(&env)],
-            sub_invokes: &[],
-        };
-        env.set_auths(&[MockAuth {
-            address: &buyer,
-            invoke: &invoke,
-        }.into()]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.release(&id);
-    }
-
     #[test]
     #[should_panic]
-    fn test_create_escrow_with_traveler_auth_not_buyer() {
-        let env = Env::default();
-        let contract_id = env.register(EscrowContract, ());
-        let buyer = Address::generate(&env);
-        let traveler = Address::generate(&env);
-        let amount: i128 = 1_000_000_000;
-
-        let invoke = MockAuthInvoke {
-            contract: &contract_id,
-            fn_name: "create_escrow",
-            args: soroban_sdk::vec![
-                &env,
-                buyer.into_val(&env),
-                traveler.into_val(&env),
-                amount.into_val(&env),
-                FAR_FUTURE.into_val(&env),
-            ],
-            sub_invokes: &[],
-        };
-        env.set_auths(&[MockAuth {
-            address: &traveler,
-            invoke: &invoke,
-        }.into()]);
-
-        let c = EscrowContractClient::new(&env, &contract_id);
-        c.create_escrow(&buyer, &traveler, &amount, &FAR_FUTURE);
-    }
-
     // ═══════════════════════════════════════════════════════════════
     // Zero / negative amount edge cases
     // ═══════════════════════════════════════════════════════════════

@@ -11,7 +11,7 @@ import { StarField } from "@/components/travel/star-field";
 import type { VaultSealState } from "@/components/travel/vault-seal";
 import { cn } from "@/lib/utils";
 
-const CONTRACT_ID = "CCLY7LHZYMEZKT72BU3D2XDBASF5SO7QK4UJCIXOUP4NRWVDLFJUEUVI";
+const CONTRACT_ID = "CDV2SCW265WSO57UIFPYTR6IZIYL6NV432QC7JH3XAQL4MRS2HRX57VD";
 const HORIZON_TESTNET = "https://horizon-testnet.stellar.org";
 const RPC_URL = "https://soroban-testnet.stellar.org";
 const NETWORK_PASSPHRASE = "Test SDF Network ; September 2015";
@@ -190,7 +190,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Funded);
         setResults(p => [{ label: "Fund Escrow", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("fund", "13");
+        const r = await submitEscrowTx("fund", "3");
         const result: ActionResult = { ...r, label: "Fund Escrow", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Funded);
@@ -209,7 +209,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Delivered);
         setResults(p => [{ label: "Confirm Delivery", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("confirm_delivery", "13");
+        const r = await submitEscrowTx("confirm_delivery", "3");
         const result: ActionResult = { ...r, label: "Confirm Delivery", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Delivered);

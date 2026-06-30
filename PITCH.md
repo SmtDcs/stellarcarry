@@ -24,7 +24,7 @@ StellarCarry connects **buyers** who want foreign products with **travelers** wh
 ## Slide 4: Technology
 - **Stellar Soroban** smart contracts for trustless escrow
 - **On-chain reputation** system — every completed delivery builds permanent trust
-- **Testnet deployed**: `CCLY7LHZYMEZKT72BU3D2XDBASF5SO7QK4UJCIXOUP4NRWVDLFJUEUVI`
+- **Testnet deployed**: `CDV2SCW265WSO57UIFPYTR6IZIYL6NV432QC7JH3XAQL4MRS2HRX57VD`
 - **Open source**: github.com/SmtDcs/stellarcarry
 - **TypeScript SDK** + **Rust contracts** + **Next.js frontend**
 
@@ -61,4 +61,4 @@ StellarCarry connects **buyers** who want foreign products with **travelers** wh
 
 **Live**: https://stellarcarry.vercel.app
 **GitHub**: https://github.com/SmtDcs/stellarcarry
-**Contract**: `CCLY7LHZYMEZKT72BU3D2XDBASF5SO7QK4UJCIXOUP4NRWVDLFJUEUVI` (testnet)
+**Contract**: `CDV2SCW265WSO57UIFPYTR6IZIYL6NV432QC7JH3XAQL4MRS2HRX57VD` (testnet)

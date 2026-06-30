@@ -15,7 +15,7 @@ https://stellarcarry.vercel.app
 https://github.com/SmtDcs/stellarcarry
 
 ### 5. Contract Address (Testnet)
-`CCEI4OH242T4VOECSSVSQRVPBAAHLNN5EWH55SDNX226YHX4NVSBPNTT`
+`CCLY7LHZYMEZKT72BU3D2XDBASF5SO7QK4UJCIXOUP4NRWVDLFJUEUVI`
 
 ### 6. Network
 Stellar Testnet (Protocol 27)

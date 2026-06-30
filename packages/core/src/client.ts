@@ -125,7 +125,6 @@ export class EscrowClient {
    * @param sourcePubKey - buyer's Stellar account public key.
    * @param buyer - buyer's Stellar account address.
    * @param traveler - traveler's Stellar account address.
-   * @param token - Stellar asset contract address.
    * @param amountStroops - escrow amount in integer stroops.
    * @param deadline - Stellar ledger timestamp (Unix seconds, NOT milliseconds)
    *   after which refund is allowed (u64).
@@ -135,7 +134,6 @@ export class EscrowClient {
     sourcePubKey: string,
     buyer: string,
     traveler: string,
-    token: string,
     amountStroops: bigint,
     deadline: bigint,
   ): Transaction {
@@ -148,9 +146,6 @@ export class EscrowClient {
     if (!traveler || typeof traveler !== 'string' || traveler.trim() === '') {
       throw new ValidationError('traveler must be a non-empty string');
     }
-    if (!token || typeof token !== 'string' || token.trim() === '') {
-      throw new ValidationError('token must be a non-empty string');
-    }
     if (typeof amountStroops !== 'bigint' || amountStroops < 0n) {
       throw new ValidationError(`amountStroops must be a non-negative bigint, got ${amountStroops}`);
     }
@@ -161,7 +156,6 @@ export class EscrowClient {
     return this.buildTransaction(sourcePubKey, 'create_escrow', [
       nativeToScVal(buyer, { type: 'address' }),
       nativeToScVal(traveler, { type: 'address' }),
-      nativeToScVal(token, { type: 'address' }),
       nativeToScVal(amountStroops, { type: 'i128' }),
       nativeToScVal(deadline, { type: 'u64' }),
     ]);

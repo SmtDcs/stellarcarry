@@ -10,7 +10,6 @@ import { EscrowClient } from '@stellarcarry/core';
 const SRC_KEY = Keypair.random().publicKey();
 const BUYER_KEY = Keypair.random().publicKey();
 const TRAVELER_KEY = Keypair.random().publicKey();
-const TOKEN_KEY = StrKey.encodeContract(hash(Buffer.from('test_token')));
 const CONTRACT_ID = StrKey.encodeContract(hash(Buffer.from('test_escrow_contract')));
 
 function makeClient(passphrase?: string): EscrowClient {
@@ -47,26 +46,24 @@ describe('EscrowClient', () => {
     it('builds a transaction with the create_escrow function and correct args', () => {
       const client = makeClient();
       const amount = 1_000_000_000n;
-      const tx = client.buildCreateEscrow(SRC_KEY, BUYER_KEY, TRAVELER_KEY, TOKEN_KEY, amount, 0n);
+      const tx = client.buildCreateEscrow(SRC_KEY, BUYER_KEY, TRAVELER_KEY, amount, 0n);
 
       const args = getInvokeContractArgs(tx);
       expect(args.functionName()).toBe('create_escrow');
 
       const scArgs = args.args() as AnyOp[];
-      expect(scArgs.length).toBe(5);
+      expect(scArgs.length).toBe(4);
 
       // 1st arg: buyer address
       expect(scArgs[0].switch().name).toBe('scvAddress');
       // 2nd arg: traveler address
       expect(scArgs[1].switch().name).toBe('scvAddress');
-      // 3rd arg: token address
-      expect(scArgs[2].switch().name).toBe('scvAddress');
-      // 4th arg: amount as i128
-      expect(scArgs[3].switch().name).toBe('scvI128');
-      // 5th arg: deadline as u64
-      expect(scArgs[4].switch().name).toBe('scvU64');
+      // 3rd arg: amount as i128
+      expect(scArgs[2].switch().name).toBe('scvI128');
+      // 4th arg: deadline as u64
+      expect(scArgs[3].switch().name).toBe('scvU64');
 
-      const i128 = scArgs[3].i128() as AnyOp;
+      const i128 = scArgs[2].i128() as AnyOp;
       // lo is Uint64 (unsigned), lo.low is the low 32 bits as a number
       expect(i128.lo().low).toBe(1_000_000_000);
       // hi is Int64 (signed), should be 0

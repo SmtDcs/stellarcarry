@@ -11,7 +11,7 @@ import { StarField } from "@/components/travel/star-field";
 import type { VaultSealState } from "@/components/travel/vault-seal";
 import { cn } from "@/lib/utils";
 
-const CONTRACT_ID = "CDYZYD7PV2O7FWZC3MJVB2XXOQ3BBC3Y2JLO7EWO7WP6XIGCRRUX6SK4";
+const CONTRACT_ID = "CB5KZIW5LSILYYG7VGJWLMN2QOWE3OIBD47JFFTQCTJ666TLUDTQAZYY";
 const HORIZON_TESTNET = "https://horizon-testnet.stellar.org";
 const RPC_URL = "https://soroban-testnet.stellar.org";
 const NETWORK_PASSPHRASE = "Test SDF Network ; September 2015";
@@ -247,7 +247,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Refunded);
         setResults(p => [...p, { label: "Refund", xdr: "", success: true }]);
       } else {
-        const r = await submitEscrowTx("refund", "6");
+        const r = await submitEscrowTx("refund", "4");
         const result: ActionResult = { ...r, label: "Refund", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Refunded);

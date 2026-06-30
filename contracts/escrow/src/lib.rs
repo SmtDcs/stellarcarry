@@ -134,10 +134,6 @@ impl EscrowContract {
             escrow.state == EscrowState::Funded,
             "escrow must be in Funded state"
         );
-        assert!(
-            env.ledger().timestamp() >= escrow.deadline,
-            "deadline not yet reached"
-        );
 
         escrow.state = EscrowState::Refunded;
         env.storage().instance().set(&key, &escrow);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { EscrowClient } from "@stellarcarry/core";
 
-const CONTRACT_ID = "CDYZYD7PV2O7FWZC3MJVB2XXOQ3BBC3Y2JLO7EWO7WP6XIGCRRUX6SK4";
+const CONTRACT_ID = "CB5KZIW5LSILYYG7VGJWLMN2QOWE3OIBD47JFFTQCTJ666TLUDTQAZYY";
 
 export async function POST(request: Request) {
   try {

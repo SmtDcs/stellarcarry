@@ -1,0 +1,287 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Departures Design Tokens ─────────────────────────────────── */
+
+/* Space: the deep-cosmos base — never flat black */
+:root {
+  --space-900: #05060A;
+  --space-800: #0A0B12;
+  --space-700: #10131C;
+  --star-yellow: #FDDA24;
+  --star-yellow-dim: rgba(253, 218, 36, 0.12);
+  --aurora-teal: #3DE1C8;
+  --aurora-teal-dim: rgba(61, 225, 200, 0.10);
+  --aurora-violet: #7C6CF0;
+  --aurora-violet-dim: rgba(124, 108, 240, 0.10);
+  --ink: #F5F3EC;
+  --ink-dim: #8A8B96;
+  --hairline: rgba(255, 255, 255, 0.08);
+  --hairline-dim: rgba(255, 255, 255, 0.04);
+
+  /* Nebula glows — layered radial gradients for depth */
+  --nebula-yellow-glow: radial-gradient(ellipse 60% 50% at 30% 20%, rgba(253, 218, 36, 0.03) 0%, transparent 70%);
+  --nebula-violet-glow: radial-gradient(ellipse 50% 60% at 70% 40%, rgba(124, 108, 240, 0.04) 0%, transparent 70%);
+  --nebula-teal-glow: radial-gradient(ellipse 40% 50% at 50% 70%, rgba(61, 225, 200, 0.03) 0%, transparent 70%);
+
+  /* Font stacks */
+  --font-heading: "Space Grotesk", var(--font-geist-sans), system-ui, sans-serif;
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Motion durations */
+  --duration-comet: 2.4s;
+  --duration-flap: 0.35s;
+  --duration-twinkle: 3s;
+  --duration-stamp: 0.6s;
+  --duration-seal: 0.9s;
+  --duration-tilt: 0.4s;
+}
+
+/* ── Tailwind v4 @theme inline ────────────────────────────────── */
+
+@theme inline {
+  --color-background: var(--space-800);
+  --color-foreground: var(--ink);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: "Space Grotesk", var(--font-geist-sans), system-ui, sans-serif;
+  --color-sidebar-ring: var(--star-yellow);
+  --color-sidebar-border: var(--hairline);
+  --color-sidebar-accent-foreground: var(--ink);
+  --color-sidebar-accent: var(--space-700);
+  --color-sidebar-primary-foreground: var(--space-900);
+  --color-sidebar-primary: var(--star-yellow);
+  --color-sidebar-foreground: var(--ink);
+  --color-sidebar: var(--space-800);
+  --color-chart-5: oklch(0.87 0 0);
+  --color-chart-4: oklch(0.556 0 0);
+  --color-chart-3: oklch(0.439 0 0);
+  --color-chart-2: oklch(0.371 0 0);
+  --color-chart-1: oklch(0.269 0 0);
+  --color-ring: var(--star-yellow);
+  --color-input: rgba(255, 255, 255, 0.12);
+  --color-border: var(--hairline);
+  --color-destructive: oklch(0.577 0.245 27.325);
+  --color-accent-foreground: var(--ink);
+  --color-accent: var(--aurora-teal-dim);
+  --color-muted-foreground: var(--ink-dim);
+  --color-muted: var(--space-700);
+  --color-secondary-foreground: var(--ink);
+  --color-secondary: rgba(124, 108, 240, 0.12);
+  --color-primary-foreground: var(--space-900);
+  --color-primary: var(--star-yellow);
+  --color-popover-foreground: var(--ink);
+  --color-popover: var(--space-700);
+  --color-card-foreground: var(--ink);
+  --color-card: var(--space-700);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite alternate;
+  --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+  --animate-comet-draw: comet-draw var(--duration-comet) ease-in-out forwards;
+  --animate-comet-travel: comet-travel var(--duration-comet) ease-in-out forwards;
+  --animate-split-flap: split-flap var(--duration-flap) ease-in-out forwards;
+  --animate-star-twinkle: star-twinkle var(--duration-twinkle) ease-in-out infinite;
+  --animate-stamp-thunk: stamp-thunk var(--duration-stamp) cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+  --animate-seal-lock: seal-lock var(--duration-seal) cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+  --animate-seal-break: seal-break var(--duration-seal) cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+  --animate-nebula-breathe: nebula-breathe 8s ease-in-out infinite alternate;
+
+  @keyframes shimmer-slide {
+    to { transform: translate(calc(100cqw - 100%), 0); }
+  }
+  @keyframes spin-around {
+    0% { transform: translateZ(0) rotate(0); }
+    15%, 35% { transform: translateZ(0) rotate(90deg); }
+    65%, 85% { transform: translateZ(0) rotate(270deg); }
+    100% { transform: translateZ(0) rotate(360deg); }
+  }
+  @keyframes comet-draw {
+    from { stroke-dashoffset: var(--arc-length, 400); }
+    to { stroke-dashoffset: 0; }
+  }
+  @keyframes comet-travel {
+    0% { offset-distance: 0%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { offset-distance: 100%; opacity: 0; }
+  }
+  @keyframes split-flap {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(-120deg); filter: brightness(0.3); }
+    51% { transform: rotateX(120deg); filter: brightness(0.3); }
+    100% { transform: rotateX(0deg); filter: brightness(1); }
+  }
+  @keyframes star-twinkle {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.3); }
+  }
+  @keyframes stamp-thunk {
+    0% { transform: scale(1.8) rotate(var(--stamp-rotate, -5deg)); opacity: 0; }
+    60% { transform: scale(0.95) rotate(var(--stamp-rotate, -5deg)); opacity: 0.9; }
+    80% { transform: scale(1.05) rotate(var(--stamp-rotate, -5deg)); }
+    100% { transform: scale(1) rotate(var(--stamp-rotate, -5deg)); opacity: 1; }
+  }
+  @keyframes seal-lock {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15); }
+    60% { transform: scale(0.95); }
+    100% { transform: scale(1); }
+  }
+  @keyframes seal-break {
+    0% { transform: scale(1) rotate(0deg); opacity: 1; }
+    30% { transform: scale(1.2) rotate(5deg); }
+    100% { transform: scale(0.3) rotate(15deg); opacity: 0; }
+  }
+  @keyframes nebula-breathe {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+  }
+
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  --animate-gradient: gradient 8s linear infinite;
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(calc(-100% - var(--gap))); }
+  }
+  @keyframes marquee-vertical {
+    from { transform: translateY(0); }
+    to { transform: translateY(calc(-100% - var(--gap))); }
+  }
+  @keyframes gradient {
+    to { background-position: var(--bg-size, 300%) 0; }
+  }
+}
+
+/* ── Light theme (fallback) ──────────────────────────────────── */
+
+:root {
+  --radius: 0.625rem;
+}
+
+/* Opacity-only star twinkle (safe on SVG <circle> — no transform shift) */
+@keyframes star-blink {
+  0%, 100% { opacity: var(--star-o-min, 0.25); }
+  50% { opacity: var(--star-o-max, 1); }
+}
+
+/* ── Dark theme (Departures) ─────────────────────────────────── */
+
+.dark {
+  --background: var(--space-800);
+  --foreground: var(--ink);
+  --card: var(--space-700);
+  --card-foreground: var(--ink);
+  --popover: var(--space-700);
+  --popover-foreground: var(--ink);
+  --primary: var(--star-yellow);
+  --primary-foreground: var(--space-900);
+  --secondary: rgba(124, 108, 240, 0.12);
+  --secondary-foreground: var(--ink);
+  --muted: var(--space-700);
+  --muted-foreground: var(--ink-dim);
+  --accent: var(--aurora-teal-dim);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: var(--hairline);
+  --input: rgba(255, 255, 255, 0.12);
+  --ring: var(--star-yellow);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: var(--space-800);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--star-yellow);
+  --sidebar-primary-foreground: var(--space-900);
+  --sidebar-accent: var(--space-700);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--hairline);
+  --sidebar-ring: var(--star-yellow);
+  --radius: 0.625rem;
+}
+
+/* ── Base layer ──────────────────────────────────────────────── */
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    background-image:
+      var(--nebula-yellow-glow),
+      var(--nebula-violet-glow),
+      var(--nebula-teal-glow);
+    background-attachment: fixed;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+/* ── Departures utility classes ───────────────────────────────── */
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-heading);
+  }
+  .text-ink-dim {
+    color: var(--ink-dim);
+  }
+  .text-star {
+    color: var(--star-yellow);
+  }
+  .border-hairline {
+    border-color: var(--hairline);
+  }
+  .bg-space-800 {
+    background-color: var(--space-800);
+  }
+  .bg-space-900 {
+    background-color: var(--space-900);
+  }
+  .bg-space-700 {
+    background-color: var(--space-700);
+  }
+  .bg-hairline-dim {
+    background-color: var(--hairline-dim);
+  }
+  .gradient-aurora {
+    background: linear-gradient(135deg, var(--aurora-teal), var(--aurora-violet));
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .star-twinkle,
+  [class*="animate-comet"],
+  [class*="animate-star"],
+  [class*="animate-stamp"],
+  [class*="animate-seal"],
+  [class*="animate-split-flap"] {
+    animation: none !important;
+  }
+}

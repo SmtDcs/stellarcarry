@@ -116,7 +116,7 @@ export function EscrowContent() {
     async (action: string, params: Record<string, unknown>) => {
       const sourcePubKey = walletStatus === "connected"
         ? walletAddress
-        : "GBV2PPK4XHMQVX4GJDPCSKYHU7HMMT4Q5OTWEWYVIHXSL22LA2535P5B";
+        : "GDUODXEJBL276HI3U26A7BW2DCOQBV7AWU2TLJBZDPUZIOMIKFLLD736";
 
       const res = await fetch("/api/escrow", {
         method: "POST",
@@ -139,7 +139,7 @@ export function EscrowContent() {
     setError(null);
 
     try {
-      const result = await simulateAction("fund", { escrowId: "0" });
+      const result = await simulateAction("fund", { escrowId: "1" });
       setResults((prev) => [{ label: "Fund Escrow", xdr: result.xdr ?? "", success: result.success, simulation: result.simulation, error: result.error }, ...prev]);
 
       if (result.success) {
@@ -161,7 +161,7 @@ export function EscrowContent() {
     setError(null);
 
     try {
-      const result = await simulateAction("confirm_delivery", { escrowId: "0" });
+      const result = await simulateAction("confirm_delivery", { escrowId: "1" });
       setResults((prev) => [{ label: "Confirm Delivery", xdr: result.xdr ?? "", success: result.success, simulation: result.simulation, error: result.error }, ...prev]);
 
       if (result.success) {
@@ -183,7 +183,7 @@ export function EscrowContent() {
     setError(null);
 
     try {
-      const result = await simulateAction("release", { escrowId: "0" });
+      const result = await simulateAction("release", { escrowId: "1" });
       setResults((prev) => [{ label: "Release Funds", xdr: result.xdr ?? "", success: result.success, simulation: result.simulation, error: result.error }, ...prev]);
 
       if (result.success) {

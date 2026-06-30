@@ -11,7 +11,7 @@ import { StarField } from "@/components/travel/star-field";
 import type { VaultSealState } from "@/components/travel/vault-seal";
 import { cn } from "@/lib/utils";
 
-const CONTRACT_ID = "CB5KZIW5LSILYYG7VGJWLMN2QOWE3OIBD47JFFTQCTJ666TLUDTQAZYY";
+const CONTRACT_ID = "CC5UKGRTF4CMRIHDU2LULGIJCZOW3HTWBJV3VS6XCL447YD22GCH7GDI";
 const HORIZON_TESTNET = "https://horizon-testnet.stellar.org";
 const RPC_URL = "https://soroban-testnet.stellar.org";
 const NETWORK_PASSPHRASE = "Test SDF Network ; September 2015";

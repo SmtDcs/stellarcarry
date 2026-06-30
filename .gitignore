@@ -1,0 +1,11 @@
+node_modules/
+.next/
+target/
+*.tsbuildinfo
+.DS_Store
+logs/
+BLOCKED.md
+.env*
+.pw-output/
+test_snapshots/
+.vercel

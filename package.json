@@ -1,0 +1,19 @@
+{
+  "name": "stellarcarry",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Decentralized cross-border personal shopping & delivery with Soroban escrow on Stellar",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "orchestrate": "tsx orchestrate.ts",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@anthropic-ai/claude-code": "1.0.128",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.5.0",
+    "vitest": "^2.0.0"
+  }
+}

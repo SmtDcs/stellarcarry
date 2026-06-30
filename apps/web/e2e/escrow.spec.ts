@@ -86,7 +86,7 @@ test.describe("Escrow page — Static states (no API)", () => {
     await page.goto(`${BASE}/escrow?state=Created`);
     await page.waitForTimeout(1500);
     const headerText = await page.textContent("body");
-    expect(headerText).toContain("CCRMSOOFXVD");
+    expect(headerText).toContain("CCEI4O");
   });
 });
 

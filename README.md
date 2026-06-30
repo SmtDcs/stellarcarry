@@ -8,7 +8,7 @@ Decentralized cross-border personal shopping & delivery on Stellar. Buyers reque
 |----------|-----|
 | **Live App** | [stellarcarry.vercel.app](https://stellarcarry.vercel.app) |
 | **GitHub** | [github.com/SmtDcs/stellarcarry](https://github.com/SmtDcs/stellarcarry) |
-| **Contract (Testnet)** | `CCRMSOOFXVD34F5RBDYI5X6DZ2Z5XJIV2GEWTRAP5T6NBXFPXYPDNJFC` |
+| **Contract (Testnet)** | `CCEI4OH242T4VOECSSVSQRVPBAAHLNN5EWH55SDNX226YHX4NVSBPNTT` |
 | **Network** | Stellar Testnet (Protocol 27) |
 
 ---

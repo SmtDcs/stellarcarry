@@ -11,7 +11,7 @@ import { StarField } from "@/components/travel/star-field";
 import type { VaultSealState } from "@/components/travel/vault-seal";
 import { cn } from "@/lib/utils";
 
-const CONTRACT_ID = "CCRMSOOFXVD34F5RBDYI5X6DZ2Z5XJIV2GEWTRAP5T6NBXFPXYPDNJFC";
+const CONTRACT_ID = "CCEI4OH242T4VOECSSVSQRVPBAAHLNN5EWH55SDNX226YHX4NVSBPNTT";
 
 type WalletStatus = "idle" | "not-installed" | "disconnected" | "connected";
 
@@ -288,7 +288,7 @@ export function EscrowContent() {
             }}
           >
             <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--star-yellow, #FDDA24)" }} />
-            Testnet — {CONTRACT_ID.slice(0, 8)}...{CONTRACT_ID.slice(-6)}
+            Testnet — {CONTRACT_ID.slice(0, 6)}...{CONTRACT_ID.slice(-4)}
           </div>
           <h1
             className="font-display text-3xl font-bold tracking-tight sm:text-4xl"

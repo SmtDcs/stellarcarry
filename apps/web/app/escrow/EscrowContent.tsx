@@ -181,6 +181,13 @@ export function EscrowContent() {
 
   // ── Action handlers: demo mode (local) or real (Freighter → RPC) ──
 
+  const handleReset = useCallback(() => {
+    setCurrentState(EscrowState.Created);
+    setResults([]);
+    setError(null);
+    setActiveAction(null);
+  }, []);
+
   const handleFund = useCallback(async () => {
     const isDemo = walletStatus !== "connected";
     setActiveAction("fund"); setError(null);
@@ -190,7 +197,7 @@ export function EscrowContent() {
         setCurrentState(EscrowState.Funded);
         setResults(p => [{ label: "Fund Escrow", xdr: "", success: true }, ...p]);
       } else {
-        const r = await submitEscrowTx("fund", "3");
+        const r = await submitEscrowTx("fund", "5");
         const result: ActionResult = { ...r, label: "Fund Escrow", simulation: {} as Record<string, unknown> };
         setResults(p => [...p, result]);
         if (r.success) setCurrentState(EscrowState.Funded);
@@ -355,13 +362,18 @@ export function EscrowContent() {
         {/* Terminal state */}
         {isTerminal && (
           <motion.div className="mb-8" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
-            <div className="rounded-2xl border p-6 text-center"
+            <div className="rounded-2xl border p-6 text-center mb-4"
               style={{ borderColor: currentState === EscrowState.Released ? "var(--aurora-teal, #3DE1C8)" : "rgba(239,68,68,0.2)",
                 backgroundColor: currentState === EscrowState.Released ? "rgba(61,225,200,0.05)" : "rgba(239,68,68,0.05)" }}>
               <span className="text-sm font-semibold" style={{ color: currentState === EscrowState.Released ? "var(--aurora-teal, #3DE1C8)" : "rgba(248,113,113,0.9)" }}>
                 {currentState === EscrowState.Released ? "Funds have been released to the traveler. This escrow is complete." : "Funds have been refunded to the buyer. This escrow is closed."}
               </span>
             </div>
+            <button onClick={handleReset}
+              className="w-full rounded-xl border px-6 py-3 text-sm font-medium transition-all hover:scale-[1.02]"
+              style={{ borderColor: "var(--star-yellow, #FDDA24)", backgroundColor: "var(--star-yellow-dim, rgba(253,218,36,0.05))", color: "var(--ink, #F5F3EC)" }}>
+              🆕 Start New Escrow
+            </button>
           </motion.div>
         )}
 
